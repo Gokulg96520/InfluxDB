@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="AutoLogData" Id="{f5b81f40-cf40-43b3-99e0-b94076764d70}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM AutoLogData
+VAR	
+
+	(* Auto Log FB *)	
+	fbPLCDBAutoLog    : FB_PLCDBAutoLogEvt(sNetID:='', tTimeout := T#5S);
+	
+	// Auto Log Group Status
+    bError            : BOOL; 
+    aAutologGrpStatus : ARRAY[0..MAX_CONFIGURATIONS] OF ST_AutoLogGrpStatus;
+	
+	//Start & Stop Auto Log
+	bStopAutoLog: BOOL;
+	bStartAutoLog: BOOL;
+	bStartedAutoLog: BOOL;
+	
+	//Start After 1 Mins
+	OneMinTimer: TON; 
+	InitTimer : BOOL := TRUE;
+	
+	(* Auto Log System Latency *)
+	pulseTimer: TON;         
+    pulseOutput: BOOL := FALSE; 
+	fbSystemLatency: TC_SysLatency;
+	
+	iActualLatency: UDINT;
+	iMaxLatency: UDINT;
+
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[//Auto Log Group Status
+IF fbPLCDBAutoLog.Status(tCheckCycle := T#10S, ADR(bError), ADR(aAutologGrpStatus), SIZEOF(aAutologGrpStatus)) THEN
+    ; 
+END_IF
+
+//Start Auto Log After 1 Mins
+OneMinTimer(IN := InitTimer, PT := T#1M);
+//Start Auto Log
+IF bStartAutoLog OR OneMinTimer.Q THEN
+	IF fbPLCDBAutoLog.Start() THEN
+		bStartedAutoLog := TRUE;
+		bStartAutoLog := FALSE;
+		InitTimer := FALSE;
+	END_IF;
+END_IF
+
+//Stop Auto Log
+IF bStopAutoLog THEN
+	IF fbPLCDBAutoLog.Stop() THEN
+		bStartedAutoLog := FALSE;
+		bStopAutoLog:=FALSE;
+	END_IF;
+END_IF
+
+(* Pulse Generation *)
+pulseTimer(IN := TRUE, PT := T#500MS);
+IF pulseTimer.Q THEN
+    pulseOutput := TRUE;  // Set pulse output to TRUE when timer reaches 500ms
+    pulseTimer(IN := FALSE); // Stop the timer
+ELSE
+    pulseOutput := FALSE; // Set pulse output to FALSE
+END_IF
+
+(* Reading System Latency *)
+fbSystemLatency(
+	NETID:='192.168.1.19.1.1', 
+	START:=pulseOutput, 
+	TMOUT:=T#1S, 
+	BUSY=> , 
+	ERR=> , 
+	ERRID=> , 
+	ACTUAL=>, 
+	MAXIMUM=>);
+	
+IF NOT fbSystemLatency.BUSY THEN
+	iActualLatency := fbSystemLatency.ACTUAL;
+	iMaxLatency := fbSystemLatency.MAXIMUM;
+END_IF
+]]></ST>
+    </Implementation>
+    <LineIds Name="AutoLogData">
+      <LineId Id="49" Count="0" />
+      <LineId Id="68" Count="1" />
+      <LineId Id="60" Count="0" />
+      <LineId Id="172" Count="0" />
+      <LineId Id="72" Count="0" />
+      <LineId Id="173" Count="0" />
+      <LineId Id="79" Count="2" />
+      <LineId Id="94" Count="0" />
+      <LineId Id="127" Count="0" />
+      <LineId Id="175" Count="0" />
+      <LineId Id="95" Count="0" />
+      <LineId Id="78" Count="0" />
+      <LineId Id="89" Count="0" />
+      <LineId Id="85" Count="1" />
+      <LineId Id="97" Count="1" />
+      <LineId Id="128" Count="0" />
+      <LineId Id="87" Count="0" />
+      <LineId Id="84" Count="0" />
+      <LineId Id="151" Count="0" />
+      <LineId Id="47" Count="0" />
+      <LineId Id="154" Count="0" />
+      <LineId Id="156" Count="4" />
+      <LineId Id="152" Count="0" />
+      <LineId Id="161" Count="0" />
+      <LineId Id="118" Count="8" />
+      <LineId Id="116" Count="0" />
+      <LineId Id="140" Count="2" />
+      <LineId Id="144" Count="0" />
+      <LineId Id="143" Count="0" />
+      <LineId Id="91" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

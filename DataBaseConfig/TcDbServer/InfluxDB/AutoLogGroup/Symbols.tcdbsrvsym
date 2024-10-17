@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<SymbolList>
+  <ID>1</ID>
+  <Name>Symbols</Name>
+  <Symbols>
+    <Symbol>
+      <ID>1</ID>
+      <Name>AutoLogData.iMaxLatency</Name>
+      <AllocationName>MaxLatency</AllocationName>
+      <DataType>UDINT</DataType>
+      <BitSize>32</BitSize>
+      <IndexGroup>16448</IndexGroup>
+      <IndexOffset>419676</IndexOffset>
+    </Symbol>
+    <Symbol>
+      <ID>2</ID>
+      <Name>AutoLogData.iActualLatency</Name>
+      <AllocationName>ActualLatency</AllocationName>
+      <DataType>UDINT</DataType>
+      <BitSize>32</BitSize>
+      <IndexGroup>16448</IndexGroup>
+      <IndexOffset>419672</IndexOffset>
+    </Symbol>
+  </Symbols>
+</SymbolList>

@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{3c694761-9227-4a61-95d2-dce1dc76fc0d}</ProjectGuid>
+    <AssemblyName>DataBaseConfig</AssemblyName>
+    <Name>DataBaseConfig</Name>
+    <RootNamespace>DataBaseConfig</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="TcDbServer.tcdbsrv">
+      <SubType>Content</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <tcdbsrvdbCompile Include="TcDbServer\InfluxDB\InfluxDB.tcdbsrvdb">
+      <DependentUpon>TcDbServer.tcdbsrv</DependentUpon>
+    </tcdbsrvdbCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <tcdbsrvautoCompile Include="TcDbServer\InfluxDB\AutoLogGroup\AutoLogGroup.tcdbsrvauto">
+      <DependentUpon>TcDbServer\InfluxDB\InfluxDB.tcdbsrvdb</DependentUpon>
+    </tcdbsrvautoCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <tcdbsrvadsCompile Include="TcDbServer\InfluxDB\AutoLogGroup\AdsDevice.tcdbsrvads">
+      <DependentUpon>TcDbServer\InfluxDB\AutoLogGroup\AutoLogGroup.tcdbsrvauto</DependentUpon>
+    </tcdbsrvadsCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <tcdbsrvsymCompile Include="TcDbServer\InfluxDB\AutoLogGroup\Symbols.tcdbsrvsym">
+      <DependentUpon>TcDbServer\InfluxDB\AutoLogGroup\AutoLogGroup.tcdbsrvauto</DependentUpon>
+    </tcdbsrvsymCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <tcdbsrvtblCompile Include="TcDbServer\InfluxDB\AutoLogGroup\DBTable.tcdbsrvtbl">
+      <DependentUpon>TcDbServer\InfluxDB\AutoLogGroup\AutoLogGroup.tcdbsrvauto</DependentUpon>
+    </tcdbsrvtblCompile>
+  </ItemGroup>
+  <!-- This next bit is required unless the macro used to Import your targets is defined in an MSBuild toolset. -->
+  <ProjectExtensions>
+    <ProjectCapabilities>
+      <ProjectConfigurationsDeclaredAsItems />
+      <TcConnectivity />
+    </ProjectCapabilities>
+  </ProjectExtensions>
+</Project>
